@@ -1,0 +1,11 @@
+
+
+#pl,#op,#fire {
+    top: 0;
+    left: 0;
+    position: absolute;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+
+}
