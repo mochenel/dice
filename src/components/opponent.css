@@ -1,10 +1,14 @@
 
-#opponent {
+.opponent {
     top: 10px;
     right: 10px;
     position: absolute;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     width: 200px;
-    height: 200px;
+    height: 0px;
 
+}
+.opponent img {
+    height: 70px;
+    width: 70px;
 }

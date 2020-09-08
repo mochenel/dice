@@ -1,4 +1,4 @@
-#player {
+.player {
     top: 10px;
     left:10px;
     position: absolute;
@@ -14,5 +14,9 @@ button {
     width:200px;
      height:200px;
      margin-left:15px;
+}
+.player img{
+    width: 70px;
+    height: 70px;
 }
 
