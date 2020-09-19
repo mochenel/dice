@@ -1,0 +1,22 @@
+/* The container must be positioned relative: */
+.custom-select {
+  position: relative;
+  font-family: Arial;
+  text-align: center;
+  
+}
+.selection{
+    padding: 20px;
+    font-family: Arial;
+    text-align: center;
+}
+.btn{
+    margin-top: 20px;
+}
+.error{
+    visibility: hidden;
+    height: 0px;
+}
+
+
+

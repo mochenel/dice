@@ -3,7 +3,6 @@ import './DrawBoard.css';
 function DrawBoard() {
 
     return (
-        <div className = "col-xs-2">
         <table >
             <tr>
                 <td id = "t100" style={{ backgroundColor:"green" }} >100</td>
@@ -126,7 +125,7 @@ function DrawBoard() {
                 <td id="t10" style={{ backgroundColor: "green" }}>10</td>
             </tr>
         </table>
-        </div>
+
         );
 }
 export default DrawBoard;

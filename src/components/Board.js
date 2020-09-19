@@ -2,11 +2,17 @@ import React, { Component } from 'react';
 import DrawBoard from './DrawBoard';
 import Play from './play';
 import Opponent from './opponent';
+import queryString from "query-string";
+import Restart from './restart'
+import Exit from './exit'
+import './Board.css'
+import { Redirect } from 'react-router-dom';
 export default  class Board extends Component {
 
     constructor(props) {
-        
+    
         super(props);
+        const {max} = queryString.parse(this.props.location.search)
         this.state = {
             player:{ id: 0, prevId: null, play: null,image:null},
             opponent:{
@@ -20,13 +26,18 @@ export default  class Board extends Component {
             turn:null,
             disabled:false,
             resetPlayer:false,
-            danger:[14,26,32,44,52,62,76,86,88,92,94,98],
+            danger:[14,26,32,36,44,48,52,62,76,86,88,92,94,98],
             win:null,
             opIndicator:1,
             prevIndicator:1,
-            OPPONENTS:["opponent[0]","opponent[1]","opponent[2]","opponent[3]","opponent[4]"],
+            OPPONENTS:["A1","A2","A3","A4","A5"],
+            max:parseInt(max),
+            exit:false,
+            current:{player:true,p1:false,p2:false,p3:false,p4:false,p5:false}
         }
         this.player = this.player.bind(this);
+        this.restart = this.restart.bind(this);
+        this.exit = this.exit.bind(this);
     }
     isWin(move){
         if(move.id === 100){
@@ -60,9 +71,9 @@ export default  class Board extends Component {
         }
        return pic;
     }
-    isKill(oponent){
+    isKill(oponent,ID){
         var container = [];
-        var dummy = this.state.opponent;
+        var dummy = {...this.state.opponent};
         if(oponent === "Indicator1"){
             container = ["Indicator2","Indicator3","Indicator4","Indicator5"];
         }
@@ -80,18 +91,24 @@ export default  class Board extends Component {
         }
         if(container.length === 4){
             for(var i = 0; i < 4;i++){
-                if(dummy[container[i]].id !==0 && dummy[container[i]].id ===dummy[oponent].id){
-                    this.resetOpponentState(container[i])
-                    return true;
+                if(dummy[container[i]].id !==0 && dummy[container[i]].id ===ID){
+                   // kill him
+                    return container[i];
                 }
             }
         }
-      return false; 
+      return null; 
         
     }
+    isPlayerKilled(ID){
+        if(ID !==0 && ID === this.state.player.id){
+            return true;
+        }
+        return false;
+    }
+   
     resetOpponentState(indicator){
-        var dummy = this.state.opponent;
-        
+        var dummy = {...this.state.opponent};
         if(indicator === "Indicator1"){
             dummy.Indicator1 = { id: 0, prevId: null, play: null, image: null,resetOpponent:false }; 
         }
@@ -107,187 +124,342 @@ export default  class Board extends Component {
         else if(indicator === "Indicator5"){
             dummy.Indicator5 = { id: 0, prevId: null, play: null, image: null,resetOpponent:false }; 
         }
-        if (this.state.opponent[indicator].id) {
-            const list = document.getElementById("t"+this.state.opponent[indicator].id);
-            list.innerHTML = this.state.opponent[indicator].id;
-        }
+     
         this.setState({opponent:dummy})
+      
+    }
+    getIndicator(){
+       
+        const curr = this.state.current;
+        if(curr.player === true){
+            return "player";
+        }
+        else if(curr.p1 === true){
+        document.getElementById("flag1").src = "/assets/greenFlag.png";
+        document.getElementById("flag2").src = "/assets/redFlag.jpg";
+        document.getElementById("flag3").src = "/assets/redFlag.jpg";
+        document.getElementById("flag4").src = "/assets/redFlag.jpg";
+        document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            return "Indicator1";
+        }
+        else if(curr.p2 === true){
+            document.getElementById("flag1").src = "/assets/redFlag.jpg";
+            document.getElementById("flag2").src = "/assets/greenFlag.png";
+            document.getElementById("flag3").src = "/assets/redFlag.jpg";
+            document.getElementById("flag4").src = "/assets/redFlag.jpg";
+            document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            return "Indicator2";
+        }
+        else if(curr.p3 === true){
+            document.getElementById("flag1").src = "/assets/redFlag.jpg";
+            document.getElementById("flag2").src = "/assets/redFlag.jpg";
+            document.getElementById("flag3").src = "/assets/greenFlag.png";
+            document.getElementById("flag4").src = "/assets/redFlag.jpg";
+            document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            return "Indicator3";
+        }
+        else if(curr.p4 === true){
+            document.getElementById("flag1").src = "/assets/redFlag.jpg";
+            document.getElementById("flag2").src = "/assets/redFlag.jpg";
+            document.getElementById("flag3").src = "/assets/redFlag.jpg";
+            document.getElementById("flag4").src = "/assets/greenFlag.png";
+            document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            return "Indicator4";
+        }
+        else if(curr.p5 === true){
+            document.getElementById("flag1").src = "/assets/redFlag.jpg";
+            document.getElementById("flag2").src = "/assets/redFlag.jpg";
+            document.getElementById("flag3").src = "/assets/redFlag.jpg";
+            document.getElementById("flag4").src = "/assets/redFlag.jpg";
+            document.getElementById("flag5").src = "/assets/greenFlag.png";
+            return "Indicator5";
+        }
+       
+        return "player";
+        
+
+    }
+    getOpponentNumber(Indicator){
+        if(Indicator=== "Indicator1"){
+            return 1;
+        }
+        else if(Indicator === "Indicator2"){
+            return 2;
+        }
+        else if(Indicator === "Indicator3"){
+            return 3;
+        }
+        else if(Indicator === "Indicator4"){
+            return 4;
+        }
+        else if(Indicator === "Indicator5"){
+            return 5;
+        }
+      
+            return 0;
+        
+    }
+    fireSound(){
+        var audio = new Audio('/sound/fire.mp3');
+        audio.play();
+    }
+    killSound(){
+        var audio = new Audio('/sound/kill.mp3');
+        audio.play();
     }
     oponent() {
 
         var number = Math.floor(Math.random() * 6) + 1;
+        var pic = this.getDicePic(number);
+        var Indicator = this.getIndicator();
+        var prevId = this.state.opponent[Indicator].id;    
+        var ID = (parseInt(prevId) + parseInt(number)) ;
+        var opNumber = this.getOpponentNumber(Indicator);
+        var playAgain = false;
+        var kill = this.isKill(Indicator,ID);
+        // check if opponent goes over fire
+        if(this.isPlayerOverFire(ID)){
+            this.fireSound();
+            this.resetOpponentState(Indicator);
+            this.removeFromBorad(prevId);
+            ID = 0;
+            prevId = 0;
+            number = 0;
+            pic = null;
+           
 
-        number = 6;
-        if(
-            this.state.opponent.Indicator1.id === 96 || 
-            this.state.opponent.Indicator2.id === 96 ||
-            this.state.opponent.Indicator3.id === 96 || 
-            this.state.opponent.Indicator4.id === 96 ||
-            this.state.opponent.Indicator5.id === 96
-            ){
-            number = 4;
+        }
+        // check if opponent kills player
+       else if(this.isPlayerKilled(ID)){
+            this.killSound();
+            this.resetPlayerState();
+            this.removeFromBorad(this.state.player.id); // remove player from board
+            this.removeFromBorad(prevId); // remove opponent from prev position
+            this.moveOpponentImage(ID,opNumber); // update opponent postion
+            playAgain = true;
+            
+        }
+        // check if opponent kills opponent
+       else if(kill){
+            this.killSound();
+            this.resetOpponentState(kill);
+            this.removeFromBorad(ID);
+            this.removeFromBorad(prevId);
+            this.moveOpponentImage(ID,this.getOpponentNumber(Indicator));
+            playAgain = true;
+         
+
+        }
+        else if(ID > 100){
+            if(number === 6){
+                playAgain = true;
+            }
+        }
+        else if(ID === 100){
+            this.removeFromBorad(prevId);
+            this.moveOpponentImage(ID,this.getOpponentNumber(Indicator)); 
+            alert("you won");
+            this.restart();
+        }
+        else if(number === 6){
+            this.removeFromBorad(prevId);
+            this.moveOpponentImage(ID,this.getOpponentNumber(Indicator)); 
+            playAgain = true;
+        }
+        else{
+            this.removeFromBorad(prevId);
+            this.moveOpponentImage(ID,this.getOpponentNumber(Indicator)); 
         }
 
-        var pic = this.getDicePic(number);
-        var Indicator = "Indicator"+this.state.opIndicator;
-        var prevId = this.state.opponent[Indicator].id;
-        var count = this.state.opIndicator; // indicator to show who is actually in play
-        this.setState((prevState) => {
-            var turn = this.state.OPPONENTS[this.state.prevIndicator]
-            var disabled = true;
-            var resetpl = false;
-            var ID = (parseInt(prevId) + parseInt(number)) ;
-            var previousID = prevState.opponent[Indicator].id;
-            var win = null;
-            // oponent kills player
-            if(prevState.player.id !== 0 && prevState.player.id === ID ){
-                this.resetPlayerState()
-                turn = `opponent[${this.state.prevIndicator}]`;
-                disabled = true;
-            }
+        var dummy = {...this.state.opponent};
+        dummy[Indicator] = { id:ID, prevId:prevId, play: number, image: pic, resetOpponent:false}
+        
+      
+        if(playAgain === true){
+            this.setState({opponent:dummy});
+        }
+        else{
+            var next =  this.setNext(opNumber);
+            this.setState({opponent:dummy,current:next});
+        }        
 
-            // oponent kills oponent
-            var kill = false;
-            if(ID !== 0){
-                if(this.isKill(Indicator)){
-                    turn = `opponent[${this.state.prevIndicator}]`;
-                    disabled = true;
-                    kill = true;
-                }
-            }
-
-            // oponent wins the game
-            if(ID === 100){
-               win = `opponent[${this.state.prevIndicator}]`;
-               ID = 100;
-            }
-            // oponent stays in the same position
-            if(ID > 100){
-                ID = prevState.opponent[Indicator].id;
-                previousID = prevState.opponent[Indicator].prevId;
-
-            }
-            // oponent plays again
-            if(number === 6 || kill == true){
-                turn = `opponent[${this.state.prevIndicator}]`;
-                disabled = true;
+    }
+    setNext(opNumber){
+        const max = this.state.max;
+        var turn;
+        if(max === 1){
+            turn = {player:true,p1:false,p2:false,p3:false,p4:false,p5:false};
+        }
+        else  if(max === 2){
+            if(opNumber === 2){
+                // from 2 to 0
+                turn = {player:true,p1:false,p2:false,p3:false,p4:false,p5:false};
             }
             else{
-                // set next player or opponent
-                if(this.state.opIndicator === 1){
-                    turn =  "opponent[1]";
-                    count = 2;
-                }
-                else if(this.state.opIndicator === 2){
-                    turn =  "opponent[2]";
-                    count = 3;
-                }
-                else if(this.state.opIndicator === 3){
-                    turn =  "opponent[3]";
-                    count = 4;
-                }
-                else if(this.state.opIndicator === 4){
-                    turn =  "opponent[4]";
-                    count = 5;
-                }
-                else if(this.state.opIndicator === 5){
-                    turn = "player";
-                    count = 1;
-                    disabled = false;
-                }
+                // from 1 to 2
+                turn = {player:false,p1:false,p2:true,p3:false,p4:false,p5:false};
             }
-
-            // create dummy object for opponent as setState does not handle nested object property modification
-            var dummy = {...this.state.opponent};
-            dummy[Indicator] = { id:ID, prevId:previousID, play: number, image: pic, resetOpponent:false, }
-            return ({
-                opponent:dummy ,
-                turn: turn,
-                disabled:disabled,
-                resetPlayer:resetpl,
-                win:win,
-                opIndicator:count,
-                prevIndicator:prevState.opIndicator
-            })
+           
         }
-        );
-
+        else  if(max === 3){
+            if(opNumber === 3){
+                // from 3 to 0
+                turn = {player:true,p1:false,p2:false,p3:false,p4:false,p5:false};
+            }
+            else if(opNumber ===2){
+                // from 2 to 3
+                turn = {player:false,p1:false,p2:false,p3:true,p4:false,p5:false};
+            }
+            else{
+                // 1 to 2
+                turn = {player:false,p1:false,p2:true,p3:false,p4:false,p5:false};
+            }
+           
+        }
+        else  if(max === 4){
+            if(opNumber === 4){
+                // from 4 to 0
+                turn = {player:true,p1:false,p2:false,p3:false,p4:false,p5:false};
+            }
+            else if(opNumber ===3 ){
+                // from 3 to 4
+                turn = {player:false,p1:false,p2:false,p3:false,p4:true,p5:false};
+            }
+            else if(opNumber === 2){
+                // 2 to 3
+                turn = {player:false,p1:false,p2:false,p3:true,p4:false,p5:false};
+            }
+            else{
+                // 1 to 2
+                turn = {player:false,p1:false,p2:true,p3:false,p4:false,p5:false};
+            }
+           
+        }
+        else  if(max === 5){
+            if(opNumber === 5){
+                // from 5 to 0
+                turn = {player:true,p1:false,p2:false,p3:false,p4:false,p5:false};
+            }
+            else if(opNumber ===4 ){
+                // from 4 to 5
+                turn = {player:false,p1:false,p2:false,p3:false,p4:false,p5:true};
+            }
+            else if(opNumber === 3){
+                // 3 to 4
+                turn = {player:false,p1:false,p2:false,p3:false,p4:true,p5:false};
+            }
+            else if(opNumber === 2){
+                // 2 to 3
+                turn = {player:false,p1:false,p2:false,p3:true,p4:false,p5:false};
+            }
+            else{
+                // 1 to 2
+                turn = {player:false,p1:false,p2:true,p3:false,p4:false,p5:false};
+            }
+           
+        }
+        if(turn.player == true){
+            document.getElementById(`flag${this.state.max}`).src = "/assets/redFlag.jpg";
+        }
+       return turn;
     }
     didPlayerKillOpponent(playerId){
         var opponent = this.state.opponent;
         if(opponent.Indicator1.id === playerId){
-            this.resetOpponentState("Indicator1");
-            return true;
+            return "Indicator1";
 
         }
         else if(opponent.Indicator2.id === playerId){
-            this.resetOpponentState("Indicator2");
-            return true;
+            return "Indicator2";
         }
         else if(opponent.Indicator3.id === playerId){
-            this.resetOpponentState("Indicator3");
-            return true;
+            return "Indicator2";
         }
         else if(opponent.Indicator4.id === playerId){
-            this.resetOpponentState("Indicator4");
-            return true; 
+            return "Indicator2"; 
         }
         else if(opponent.Indicator5.id === playerId){
-            this.resetOpponentState("Indicator5");
-            return true;
+            return "Indicator2";
         }
-        return false; 
+        return null; 
     }
    
     player(e) {
         e.preventDefault();
-        e.target.disabled = this.state.disabled;
-        var count = 1;
+        if(this.state.current.player === true){
+            e.target.disabled = false;
+        }
+        else{
+            e.target.disabled = true;
+        }
         var number = Math.floor(Math.random() * 6) + 1;
         var pic =this.getDicePic(number);
         var prevId = this.state.player.id;
-        this.setState((prevState)=>
-        {
-            var turn = "opponent[0]";
-            var disabled = true;
-            var ID = (parseInt(prevId) + parseInt(number));
-            var previousID = prevState.player.id;
-            var win = null;
-          
-            if(ID !== 0){
-                  // kill opponent 
-                 if( this.didPlayerKillOpponent(ID)){
-                    turn = "player";
-                    disabled = false
-                 }
-            
-            }
-            // set win to player if player's id is 100
-            if(ID === 100){
-               win = "player";
-               ID = 100;
-            }
-            if(ID > 100){
-                ID = prevState.player.id;
-                previousID = prevState.player.prevId;
-            }
-            if(number === 6){
-                turn = "player";
-                disabled = false;
-            }
-            return ({
-                player: { id: ID, prevId: previousID,play: number, image: pic,},
-                turn: turn,
-                disabled:disabled,
-                resetPlayer:false,
-                win:win,
-                prevIndicator:1
-            })
-            }
-        );
+        var ID = (parseInt(prevId) + parseInt(number));
+        var Next = true; // indicate whether player play again or not
+        var done = false;
+        var Indicator = this.didPlayerKillOpponent(ID);
+        var turn =  {player:true,p1:false,p2:false,p3:false,p4:false,p5:false};
+        // check player over fire
+        if(this.isPlayerOverFire(ID)){
+            this.fireSound();
+            this.resetPlayerState();
+            this.removeFromBorad(prevId);
+          if(number !== 6){
+            turn =  {player:false,p1:true,p2:false,p3:false,p4:false,p5:false}
+
+          }
+          else{
+            Next = false;
+          }
+         ID = 0;
+         prevId = 0;
+         number = 0;
+         pic = null;
+        
+        }
+        // check if player kills opponent
       
+        else if(Indicator !==null){
+            this.killSound();
+            this.resetOpponentState(Indicator);
+            this.removeFromBorad(ID); // remove opponent
+            this.removeFromBorad(prevId); // remove player at prev position
+            this.movePlayerImage(ID); // move player to the next
+            Next = false;
+            
+        }
+      
+        // check if ID > 100
+        else if(ID > 100){
+            ID = prevId;
+            if(number === 6){
+                Next = false;
+            }
+        }
+        else if(number === 6){
+            this.removeFromBorad(prevId); // remove player at prev position
+            this.movePlayerImage(ID); // move player to the next
+            Next = false;
+         }
+           // check if player wins
+       else  if(ID === 100){
+            alert("Player won");
+            this.restart();
+        }
+         // normal move
+         else{
+             
+            this.removeFromBorad(prevId); // remove player at prev position
+            this.movePlayerImage(ID); // move player to the next
+            
+            Next = true;
+            turn =  {player:false,p1:true,p2:false,p3:false,p4:false,p5:false};
+         }
        
-       // this.movePlayerImage();
+            this.setState({ player:{ id: ID, prevId: prevId, play: number,image:pic},disabled:Next,current:turn})
+ 
+        
       
     } 
 
@@ -303,126 +475,136 @@ the following lifecycle methods are used to give the opponent chance to play bas
     componentDidMount() {
       this.interval = setInterval((prevState)=>{
         this.setState({turn: this.state.turn})
+       
         // is there chance for opponent?
-        if(this.state.OPPONENTS.includes(this.state.turn)){
+        if(this.state.current.player === false){
+         
          this.oponent();   
         }
+       
        },
     5000)
     }
+
     componentWillUnmount() {
         clearInterval(this.interval);
     }
+
     resetPlayerState(){
-        if (this.state.player.id) {
-            const list = document.getElementById("t"+this.state.player.id);
-             list.innerHTML = this.state.player.id;
-        }
         this.setState({player:{ id: 0, prevId: null, play: null,image:null},disabled:true,})
 
     }
-    movePlayerImage() {
-        if (this.state.player.id) {
-            // check if player is not moving onto fire
-            if(this.hasDanger(this.state.player.id)){
-                   this.setState((prevState)=>{
-                       return{player:{id:0,prevId:0},
-                              resetPlayer:false,
-                              disabled:true,
-                              }
-                     })
-                   // remove image for start over
-                   document.getElementById("t"+this.state.player.prevId).innerHTML = this.state.player.prevId;
-                   
-                   return;
-            }
-            if (this.state.player.prevId) {
-                const list = document.getElementById("t"+this.state.player.prevId);
-                 list.innerHTML = this.state.player.prevId;
-            }
-           
+    removeFromBorad(prevID){
+        if (prevID) {
+            const list = document.getElementById("t"+prevID);
+             list.innerHTML = prevID;
+        }
+    }
+
+    isPlayerOverFire(ID){
+        if(this.hasDanger(ID)){
+           return true;
+     }
+     return false;
+    }
+
+    movePlayerImage(ID) {
+
+        if(ID !== 0){
             const img = "/assets/tvl_t.png";
-            const id = document.getElementById("t"+this.state.player.id);
+            const id = document.getElementById("t"+ID);
             const imgTag = document.createElement("IMG");
             imgTag.setAttribute("src", img);
             imgTag.setAttribute("id", "pl");
             imgTag.setAttribute("title", "me");
             id.appendChild(imgTag);
+        }
+           
 
         }
-    }
 
-    moveOpponentImage() {
-        var Indicator = "Indicator"+this.state.prevIndicator;
-       
-            console.log(this.state)
-           if (this.state.opponent[Indicator].id) {
-            if(this.state.opponent[Indicator].id == 100){
-              //  alert("you lost")
-           
-            }
-              // check if opponent is not moving onto fire
-            if(this.hasDanger(this.state.opponent[Indicator].id)){
-                   this.setState((prevState)=>{
-                    var dummy = {...this.state.opponent}
-                    dummy[Indicator] = {id:0,resetOpponent:false,prevId:0};
-                       return{
-                              opponent:dummy,
-                              disabled:false,
-                              }
-                     })
-                   // remove image for start over
-                   document.getElementById("t"+this.state.opponent[Indicator].prevId).innerHTML = this.state.opponent[Indicator].prevId;
-                   
-                   return;
-            }
-            if (this.state.opponent[Indicator].prevId) {
-                const list = document.getElementById("t"+this.state.opponent[Indicator].prevId);
-                 list.innerHTML = this.state.opponent[Indicator].prevId;
-            }
-         
+    moveOpponentImage(ID,opNumber) {
+           if (ID) {
             // display correct image
-            let img = "/assets/tvl_s.png";
-            if(this.state.prevIndicator === 2){
-                img = "/assets/tvl_dh.png";
+            let img = "/assets/red.jpg";
+            if(opNumber === 2){
+                img = "/assets/blue.png";
             }
-            else if(this.state.prevIndicator === 3){
-                img = "/assets/tvl_dv.png";
+            else if(opNumber === 3){
+                img = "/assets/yellow.png";
             }
-            else if(this.state.prevIndicator === 4){
-                img = "/assets/tvl_rh.png";
+            else if(opNumber === 4){
+                img = "/assets/purple.png";
             }
-            else if(this.state.prevIndicator === 5){
-                img = "/assets/tvl_rv.png";
+            else if(opNumber === 5){
+                img = "/assets/green.png";
             }
-            let id = document.getElementById("t"+this.state.opponent[Indicator].id);
+            let id = document.getElementById("t"+ID);
             const imgTag = document.createElement("IMG");
             imgTag.setAttribute("src", img);
             imgTag.setAttribute("id", "op");
-            imgTag.setAttribute("title", `opponent[${this.state.prevIndicator}]`);
+            imgTag.setAttribute("title", `opponent${opNumber}`);
             id.appendChild(imgTag);
-
         }  
              
     }
+    restart(){
+      
+     window.location.reload(false);
+    }
+    exit(){
+        this.setState({exit:true})
+    }
   
     render() {
-        var Indicator = "Indicator"+this.state.prevIndicator;
-         this.movePlayerImage();
-         this.moveOpponentImage();
-        console.log("*********")
-         if(this.state.win){
-            if(this.state.win === "player"){
-                alert("you won")
-            }else{
-                alert("opponent "+this.state.prevIndicator+ " won")
-            }
-         }
+
+        const path2 = "/"
+        if(this.state.exit === true){
+            return(
+                <Redirect to={path2} />
+            )
+        }
+        var Indicator = this.getIndicator();
+        var opNumber = this.getOpponentNumber(Indicator);
+        var number;
+        var image;
+        if(opNumber === 0){
+            number = 0;
+            image = null;
+        }
+        else{
+          
+            number = this.state.opponent[Indicator].play;
+            image = this.state.opponent[Indicator].image
+        }
             return (
-                <div>
-                    <DrawBoard />
-                    <Play disabled = {this.state.disabled} test={this.player} number={this.state.player.play} image={this.state.player.image} />
-                    <Opponent opIndicator = {this.state.prevIndicator} number={this.state.opponent[Indicator].play} image={this.state.opponent[Indicator].image} />
+                <div className = "parent">
+                    <div className = "flex-board">
+                        <DrawBoard />
+                    </div>
+                    <div className = 'flex-player'>
+                        <div className = 'flex-player-child-1'>
+                            <Play disabled = {!this.state.current.player} test={this.player} number={this.state.player.play} image={this.state.player.image} />
+                        </div>
+
+                        <div className = 'flex-player-child-2'>
+                            <Restart restart = {this.restart} />
+                        </div>
+
+                        <div className = 'flex-player-child-3'>
+                            <Exit exit = {this.exit} />
+                        </div>
+
+                    </div>
+                    
+                    <div className = "flex-opponent">
+                    <Opponent 
+                    opIndicator = {opNumber} 
+                    number={number}
+                    image={image}
+                    max = {this.state.max}
+                     />
+                     </div>
                 </div>
             );
 

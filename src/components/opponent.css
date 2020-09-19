@@ -1,14 +1,31 @@
 
-.opponent {
-    top: 10px;
-    right: 10px;
-    position: absolute;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    width: 200px;
-    height: 0px;
-
-}
 .opponent img {
     height: 70px;
     width: 70px;
+} 
+/* opponent flex children */
+.indicator1{
+    height: 100px;
+    width: 200px;
+}
+.indicator2{
+    height: 100px;
+    width: 200px;
+}
+.indicator3{
+    height: 100px;
+    width: 200px;
+}
+.indicator4{
+    height: 100px;
+    width: 200px;
+}
+.indicator5{
+    height: 100px;
+    width: 200px;
+}
+#flag1,#flag2,#flag3,#flag4,#flag5{
+    height: 50px;
+    width: 50px;
+    margin-right: 20px;
 }
