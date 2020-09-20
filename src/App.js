@@ -8,17 +8,16 @@ import {BrowserRouter as Router, Route,Switch} from 'react-router-dom'
 
 function App() {
   return (
+    
     <Router>
-      <div >
+      <div id = "App-container" className = "row row-list">
         <Switch>
-          <div id = "App-container" className = "row row-list">
               <Route path="/fireGame" exact component={Board}></Route>
-          </div>
       </Switch>
+      </div>
+      <div id = "App-container" className = "row row-list">
       <Switch>
-        <div id = "App-container" className = "row row-list">
               <Route path="/" exact component={Selection}></Route>
-        </div>
       </Switch>
       </div>
     </Router>
