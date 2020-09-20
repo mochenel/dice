@@ -44,7 +44,7 @@ class Selection extends React.Component{
             <h2 className = "text-center header">Welcome to fire Game</h2>
             </div>
             <form className = "form-group pt-20 ">
-                <div class="alert alert-danger error custom-control" id = "error">
+                <div className="alert alert-danger error custom-control" id = "error">
                   
                     <strong>Select the number of opponents</strong> 
                 </div>
