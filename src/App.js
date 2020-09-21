@@ -9,9 +9,18 @@ import {BrowserRouter as Router, Route,Switch} from 'react-router-dom'
 function App() {
   return (
     
-   <div>
-    Hello world
-   </div>
+    <Router>
+      <div id = "App-container" className = "row row-list">
+        <Switch>
+              <Route path="/fireGame" exact component={Board}></Route>
+      </Switch>
+      </div>
+      <div id = "App-container" className = "row row-list">
+      <Switch>
+              <Route path="/" exact component={Selection}></Route>
+      </Switch>
+      </div>
+    </Router>
   );
 }
 
