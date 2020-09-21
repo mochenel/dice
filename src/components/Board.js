@@ -13,6 +13,12 @@ export default  class Board extends Component {
     
         super(props);
         const {max} = queryString.parse(this.props.location.search)
+        if(max){
+
+        }
+        else{
+            max = 1;
+        }
         this.state = {
             player:{ id: 0, prevId: null, play: null,image:null},
             opponent:{
