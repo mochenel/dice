@@ -17,7 +17,7 @@ function App() {
       </div>
       <div id = "App-container" className = "row row-list">
       <Switch>
-              <Route path="/" exact component={Selection}></Route>
+              <Route path="/dice" exact component={Selection}></Route>
       </Switch>
       </div>
     </Router>
