@@ -15,12 +15,12 @@ class Selection extends React.Component{
     clickHandler(e){
  
         if(this.state.boundary === null || this.state.boundary === 0){
-        
+            e.preventDefault();
             this.setState({link:null})
  
             document.getElementById("error").style.visibility = "visible";
             document.getElementById("error").style.height = "40px";
-            e.preventDefault();
+           
             
         }
         else{
@@ -62,7 +62,7 @@ class Selection extends React.Component{
                         </select>
                 </div>
                 <div className = "form-group">
-                    <button className = "form-control btn btn-primary"onSubmit = {this.clickHandler} >Play</button>
+                    <button className = "form-control btn btn-primary"onClick = {this.clickHandler} >Play</button>
                     
                </div>
             </form>
