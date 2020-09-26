@@ -23,7 +23,10 @@ class Selection extends React.Component{
             e.preventDefault();
             
         }
-        this.setState({link:`/fireGame?max=${this.state.boundary}`})
+        else{
+            this.setState({link:`/fireGame?max=${this.state.boundary}`})
+        }
+       
       
     }
     changeHandler(e){
