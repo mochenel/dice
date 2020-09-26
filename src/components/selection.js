@@ -62,7 +62,7 @@ class Selection extends React.Component{
                         </select>
                 </div>
                 <div className = "form-group">
-                    <button className = "form-control btn btn-primary"onClick = {this.clickHandler} >Play</button>
+                    <button className = "form-control btn btn-primary"onSubmit = {this.clickHandler} >Play</button>
                     
                </div>
             </form>
