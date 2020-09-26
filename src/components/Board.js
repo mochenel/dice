@@ -206,11 +206,11 @@ export default  class Board extends Component {
         
     }
     fireSound(){
-        var audio = new Audio('/sound/fire.mp3');
+        var audio = new Audio('./sound/fire.mp3');
         audio.play();
     }
     killSound(){
-        var audio = new Audio('/sound/kill.mp3');
+        var audio = new Audio('./sound/kill.mp3');
         audio.play();
     }
     oponent() {

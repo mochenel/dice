@@ -15,17 +15,17 @@ class Selection extends React.Component{
     clickHandler(e){
  
         if(this.state.boundary === null || this.state.boundary === 0){
-            e.preventDefault();
+           
             this.setState({link:null})
  
             document.getElementById("error").style.visibility = "visible";
             document.getElementById("error").style.height = "40px";
-           
-            
+            e.preventDefault(); 
+            return;
         }
-        else{
+    
             this.setState({link:`/fireGame?max=${this.state.boundary}`})
-        }
+        
        
       
     }
