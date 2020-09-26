@@ -37,7 +37,7 @@ class Selection extends React.Component{
   
     render(){
         
-        if (this.state.link) {
+        if (this.state.link &&  this.state.link !== null) {
             return <Redirect to={this.state.link} />
           }
     return (
@@ -52,8 +52,12 @@ class Selection extends React.Component{
                     <strong>Select the number of opponents</strong> 
                 </div>
                <div className = "form-group">
-                    <select className = "custom-select text-center mt-20" onChange = {this.changeHandler}>
-                            <option value = "0">Select Number of opponents</option>
+                    <select
+                     className = "custom-select text-center mt-20" 
+                     onChange = {this.changeHandler} required
+                     
+                     >
+                            <option value = "">Select Number of opponents</option>
                             <option value = "1">1</option>
                             <option value = "2">2</option>
                             <option value = "3">3</option>
