@@ -6,7 +6,7 @@ function Play(props) {
         <div id = "player" className = " player col-xs-3">
             <form>
                 <button disabled = {props.disabled} className="btn btn-primary" onClick={props.test}> Play </button> <br /><br /><br />
-                <img src={props.image? props.image :"/assets/tvl_t.png"} />
+                <img src={props.image? props.image :"./assets/tvl_t.png"} />
 
             </form>
             

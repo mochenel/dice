@@ -58,22 +58,22 @@ export default  class Board extends Component {
     getDicePic(number){
         var pic = "";
         if (number === 1) {
-            pic = "/assets/one.jpg";
+            pic = "./assets/one.jpg";
         }
         else if (number === 2) {
-            pic = "/assets/two.jpg";
+            pic = "./assets/two.jpg";
         }
         else if (number === 3) {
-            pic = "/assets/three.png";
+            pic = "./assets/three.png";
         }
         else if (number === 4) {
-            pic = "/assets/four.png";
+            pic = "./assets/four.png";
         }
         else if (number === 5) {
-            pic = "/assets/five.jpg";
+            pic = "./assets/five.jpg";
         }
         else if (number === 6) {
-            pic = "/assets/six.jpg";
+            pic = "./assets/six.jpg";
         }
        return pic;
     }
@@ -141,43 +141,43 @@ export default  class Board extends Component {
             return "player";
         }
         else if(curr.p1 === true){
-        document.getElementById("flag1").src = "/assets/greenFlag.png";
-        document.getElementById("flag2").src = "/assets/redFlag.jpg";
-        document.getElementById("flag3").src = "/assets/redFlag.jpg";
-        document.getElementById("flag4").src = "/assets/redFlag.jpg";
-        document.getElementById("flag5").src = "/assets/redFlag.jpg";
+        document.getElementById("flag1").src = "./assets/greenFlag.png";
+        document.getElementById("flag2").src = "./assets/redFlag.jpg";
+        document.getElementById("flag3").src = "./assets/redFlag.jpg";
+        document.getElementById("flag4").src = "./assets/redFlag.jpg";
+        document.getElementById("flag5").src = "./assets/redFlag.jpg";
             return "Indicator1";
         }
         else if(curr.p2 === true){
-            document.getElementById("flag1").src = "/assets/redFlag.jpg";
-            document.getElementById("flag2").src = "/assets/greenFlag.png";
-            document.getElementById("flag3").src = "/assets/redFlag.jpg";
-            document.getElementById("flag4").src = "/assets/redFlag.jpg";
-            document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            document.getElementById("flag1").src = "./assets/redFlag.jpg";
+            document.getElementById("flag2").src = "./assets/greenFlag.png";
+            document.getElementById("flag3").src = "./assets/redFlag.jpg";
+            document.getElementById("flag4").src = "./assets/redFlag.jpg";
+            document.getElementById("flag5").src = "./assets/redFlag.jpg";
             return "Indicator2";
         }
         else if(curr.p3 === true){
-            document.getElementById("flag1").src = "/assets/redFlag.jpg";
-            document.getElementById("flag2").src = "/assets/redFlag.jpg";
-            document.getElementById("flag3").src = "/assets/greenFlag.png";
-            document.getElementById("flag4").src = "/assets/redFlag.jpg";
-            document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            document.getElementById("flag1").src = "./assets/redFlag.jpg";
+            document.getElementById("flag2").src = "./assets/redFlag.jpg";
+            document.getElementById("flag3").src = "./assets/greenFlag.png";
+            document.getElementById("flag4").src = "./assets/redFlag.jpg";
+            document.getElementById("flag5").src = "./assets/redFlag.jpg";
             return "Indicator3";
         }
         else if(curr.p4 === true){
-            document.getElementById("flag1").src = "/assets/redFlag.jpg";
-            document.getElementById("flag2").src = "/assets/redFlag.jpg";
-            document.getElementById("flag3").src = "/assets/redFlag.jpg";
-            document.getElementById("flag4").src = "/assets/greenFlag.png";
-            document.getElementById("flag5").src = "/assets/redFlag.jpg";
+            document.getElementById("flag1").src = "./assets/redFlag.jpg";
+            document.getElementById("flag2").src = "./assets/redFlag.jpg";
+            document.getElementById("flag3").src = "./assets/redFlag.jpg";
+            document.getElementById("flag4").src = "./assets/greenFlag.png";
+            document.getElementById("flag5").src = "./assets/redFlag.jpg";
             return "Indicator4";
         }
         else if(curr.p5 === true){
-            document.getElementById("flag1").src = "/assets/redFlag.jpg";
-            document.getElementById("flag2").src = "/assets/redFlag.jpg";
-            document.getElementById("flag3").src = "/assets/redFlag.jpg";
-            document.getElementById("flag4").src = "/assets/redFlag.jpg";
-            document.getElementById("flag5").src = "/assets/greenFlag.png";
+            document.getElementById("flag1").src = "./assets/redFlag.jpg";
+            document.getElementById("flag2").src = "./assets/redFlag.jpg";
+            document.getElementById("flag3").src = "./assets/redFlag.jpg";
+            document.getElementById("flag4").src = "./assets/redFlag.jpg";
+            document.getElementById("flag5").src = "./assets/greenFlag.png";
             return "Indicator5";
         }
        
@@ -365,7 +365,7 @@ export default  class Board extends Component {
            
         }
         if(turn.player == true){
-            document.getElementById(`flag${this.state.max}`).src = "/assets/redFlag.jpg";
+            document.getElementById(`flag${this.state.max}`).src = "./assets/redFlag.jpg";
         }
        return turn;
     }
@@ -517,7 +517,7 @@ the following lifecycle methods are used to give the opponent chance to play bas
     movePlayerImage(ID) {
 
         if(ID !== 0){
-            const img = "/assets/tvl_t.png";
+            const img = "./assets/tvl_t.png";
             const id = document.getElementById("t"+ID);
             const imgTag = document.createElement("IMG");
             imgTag.setAttribute("src", img);
@@ -532,18 +532,18 @@ the following lifecycle methods are used to give the opponent chance to play bas
     moveOpponentImage(ID,opNumber) {
            if (ID) {
             // display correct image
-            let img = "/assets/red.jpg";
+            let img = "./assets/red.jpg";
             if(opNumber === 2){
-                img = "/assets/blue.png";
+                img = "./assets/blue.png";
             }
             else if(opNumber === 3){
-                img = "/assets/yellow.png";
+                img = "./assets/yellow.png";
             }
             else if(opNumber === 4){
-                img = "/assets/purple.png";
+                img = "./assets/purple.png";
             }
             else if(opNumber === 5){
-                img = "/assets/green.png";
+                img = "./assets/green.png";
             }
             let id = document.getElementById("t"+ID);
             const imgTag = document.createElement("IMG");
