@@ -4,7 +4,7 @@ import Board from './components/Board';
 import Selection from './components/selection';
 import './css/bootstrap.min.css';
 
-import {BrowserRouter as Router, Route,Switch} from 'react-router-dom'
+import {HashRouter as Router, Route,Switch} from 'react-router-dom'
 
 function App() {
   return (
